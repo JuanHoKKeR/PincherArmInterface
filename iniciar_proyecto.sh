@@ -1,17 +1,34 @@
 #!/bin/bash
-# Este script inicia roscore, el roslaunch para el robot, y luego ejecuta un script de Python.
+
+# Función para manejar el cierre de los procesos
+cleanup() {
+    echo "Cerrando nodos y roscore..."
+    # Envía señal de terminación a los procesos iniciados
+    killall -q roslaunch
+    killall -q rosrun
+    killall -q roscore
+    exit 0
+}
+
+# Captura las señales SIGINT y SIGTERM y las redirige a la función 'cleanup'
+trap cleanup SIGINT SIGTERM
 
 echo "Iniciando roscore..."
 roscore &
-# Espera un poco para asegurarse de que roscore esté completamente iniciado
+roscore_pid=$!
 sleep 5
 
 echo "Iniciando el roslaunch para el robot..."
-# Asegúrate de reemplazar 'tu_paquete' y 'arm.launch' con los nombres correctos
-roslaunch pincher_arm_bringup arm.launch & 
-sleep 10 # Ajusta este tiempo según lo que necesite tu sistema para iniciar completamente
+roslaunch pincher_arm_bringup arm.launch &
+roslaunch_pid=$!
+sleep 10
 
 echo "Iniciando el proyecto..."
-# Asegúrate de reemplazar 'test_movements' y 'Interface.py' con los nombres correctos
-rosrun test_movements Interface.py
+rosrun test_movements Interface.py &
+rosrun_pid=$!
 
+# Espera a que el script de Python finalice
+wait $rosrun_pid
+
+# Limpieza final
+cleanup
