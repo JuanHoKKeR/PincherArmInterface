@@ -1,0 +1,16 @@
+[submodule "pincher_arm"]
+    path = src/pincher_arm
+    url = https://github.com/fictionlab/pincher_arm.git
+
+[submodule "external/robotics-toolbox-python"]
+	path = external/robotics-toolbox-python
+	url = https://github.com/petercorke/robotics-toolbox-python.git
+[submodule "external/swift"]
+	path = external/swift
+	url = https://github.com/jhavl/swift
+[submodule "external/spatialgeometry"]
+	path = external/spatialgeometry
+	url = https://github.com/jhavl/spatialgeometry
+[submodule "external/spatialmath-python"]
+	path = external/spatialmath-python
+	url = https://github.com/petercorke/spatialmath-python.git
