@@ -1,0 +1,8 @@
+prefix=/home/juancruz/PincherArm_catkin_ws/install
+
+Name: pincher_arm_moveit_demos
+Description: Description of pincher_arm_moveit_demos
+Version: 0.2.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: moveit_core moveit_ros_planning_interface roscpp tf2_geometry_msgs

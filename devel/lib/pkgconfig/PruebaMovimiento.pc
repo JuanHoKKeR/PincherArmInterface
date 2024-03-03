@@ -1,0 +1,8 @@
+prefix=/home/juancruz/PincherArm_catkin_ws/devel
+
+Name: PruebaMovimiento
+Description: Description of PruebaMovimiento
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

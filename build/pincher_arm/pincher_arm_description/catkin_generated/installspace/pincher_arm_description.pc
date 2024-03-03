@@ -1,0 +1,8 @@
+prefix=/home/juancruz/PincherArm_catkin_ws/install
+
+Name: pincher_arm_description
+Description: Description of pincher_arm_description
+Version: 0.2.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

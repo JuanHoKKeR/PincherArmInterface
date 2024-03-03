@@ -1,0 +1,2 @@
+pincher_arm/pincher_arm:pincher_arm/pincher_arm_bringup:pincher_arm/pincher_arm_description:pincher_arm/pincher_arm_ikfast_plugin:pincher_arm/pincher_arm_moveit_config:pincher_arm/pincher_arm_moveit_demos:test_movements
+-DCATKIN_DEVEL_PREFIX=/home/juancruz/PincherArm_catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/juancruz/PincherArm_catkin_ws/install -G Unix Makefiles

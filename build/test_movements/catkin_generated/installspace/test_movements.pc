@@ -1,0 +1,8 @@
+prefix=/home/juancruz/PincherArm_catkin_ws/install
+
+Name: test_movements
+Description: Description of test_movements
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

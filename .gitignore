@@ -1,11 +1,11 @@
-# Ignorar la carpeta build
-build/
+# # Ignorar la carpeta build
+# build/
 
-# Ignorar la carpeta devel excepto algunos archivos de configuración importantes
-devel/
-!devel/setup.bash
-!devel/setup.zsh
-!devel/setup.sh
+# # Ignorar la carpeta devel excepto algunos archivos de configuración importantes
+# devel/
+# !devel/setup.bash
+# !devel/setup.zsh
+# !devel/setup.sh
 
 # Ignorar archivos generados específicamente
 *.pyc
