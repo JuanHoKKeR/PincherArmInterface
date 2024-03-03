@@ -18,18 +18,38 @@ def define_robot():
     robot = rtb.DHRobot([Link1, Link2, Link3, Link4], name='Pincher rtb')
     return robot
 
+def IK_robot(x,y,z):
+    yaw_deseado = radians(90)  # Convertir a radianes si estás trabajando con grados
+    pitch = 0  # Ángulo de Pitch inicial
+    # Rango de Pitch a barrer
+    roll_min = radians(-150)
+    roll_max = radians(150)
+    roll_step = radians(5)  # Definir un paso adecuado para el barrido
+
+    menor_error = 0.1
+    mejor_solucion = None
+
+    for roll in np.arange(roll_min, roll_max, roll_step):
+        T = SE3(x, y, z) * SE3.RPY([yaw_deseado, pitch, roll], order='zyx')
+        solution = robot.ikine_LM(T, [0, 0, 0, 0], 15, 10, 0.01, True)
+        if solution.success and solution.residual < menor_error:
+            mejor_solucion = solution
+            menor_error = solution.residual
+    # Procesar soluciones válidas
+    if mejor_solucion is not None:
+        #print(f"Mejor solución encontrada con error residual {menor_error}: {mejor_solucion.q}")
+        #print(f"Ángulos en grados: {[degrees(angle) for angle in mejor_solucion.q]}")
+        return mejor_solucion.q
+    else:
+        #print("No se encontró una solución válida.")
+        return None
+
 robot = define_robot()
 
 # # # Inicializa las posiciones de las articulaciones
 # joint_positions = [0, 0, 0, 0]
 
-# # T = robot.fkine(joint_positions)
-# T = SE3([
-#     [0.1226, -0.7932, 0.5965, 12],
-#     [0.09115, -0.5895, -0.8026, 9],
-#     [0.9883, 0.1528, 0, 30],
-#     [0, 0, 0, 1]
-# ])
+
 # print(f"Posición de la herramienta: {T.t}")
 # print("Pasando a ikine")
 # q = robot.ikine_LM(T)
@@ -37,73 +57,56 @@ robot = define_robot()
 
 # robot.plot(joint_positions)
 
-# # Parámetros del semicírculo
-# t = np.linspace(0, np.pi, 10)  # 10 puntos en el semicírculo
-# r = 3  # Radio del semicírculo
-# x = r * np.cos(t)  # Coordenadas x
-# y = r * np.sin(t) + 9 # Coordenadas y
-# z = 30  # Coordenadas z
-# # robot.plot([0, 0, 0, 0])
-# # fig = plt.figure()
-# # ax = fig.add_subplot(111, projection='3d')
-# # # Itera sobre cada punto en el semicírculo
-# # for yi, xi in zip(y, x):
-# #     ax.scatter(xi, yi, z, s=100, c='b')  # s es el tamaño del punto
+def Circle(altura, centro_x, centro_y, radio):
+    # Parámetros del círculo
+    t = np.linspace(0, 2*np.pi, 20)  # 10 puntos en el círculo
+    r = radio  # Radio del círculo
+    y = r * np.sin(t) + centro_y  # Coordenadas y
+    x = r * np.cos(t) + centro_x  # Coordenadas x
+    z = altura  # Coordenadas z
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    # Itera sobre cada punto en el círculo
+    for yi, xi in zip(y, x):
+        ax.scatter(xi, yi, z, s=50, c='b')  # s es el tamaño del punto
 
-# # # Mostrar el gráfico
-# # plt.show(block=True)
-
-
-
+    # Mostrar el gráfico
+    plt.show()
+    return x, y, z
 
 
+def Heart(altura, centro_x, centro_y, radio):
+    # Parámetros del corazón
+    t = np.linspace(0, 2*np.pi, 40)  # 100 puntos para una mejor resolución
+    x = radio * (16 * np.sin(t)**3) + centro_x
+    y = radio * (13 * np.cos(t) - 5 * np.cos(2*t) - 2 * np.cos(3*t) - np.cos(4*t)) + centro_y
+    z = altura
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    for yi, xi in zip(y, x):
+        ax.scatter(xi, yi, z, s=50, c='b')  # s es el tamaño del punto
+
+    # Mostrar el gráfico
+    plt.show()
+    return x, y, z
+
+x, y, z = Heart(10, 16, 16, 0.3)
+
+#x, y, z =Circle(4, 8, 18, 4)
 
 
-# for yi, xi in zip(y,x):
-#     # Crea la transformación homogénea para el punto objetivo
-#     Tm = SE3(xi, yi, z) #* SE3.RPY([0, 0, 0], unit='rad')  # Ajusta la orientación si es necesario
-#     #print(f"Matriz de transformación homogénea {Tm}")
-#     #Calcula la cinemática inversa para encontrar las posiciones de las articulaciones
-#     solucion = robot.ikine_LM(Tm, joint_positions, 70, 120,1.3, True, None, None) # Usa ikine_LM o cualquier otro método de cinemática inversa adecuado
-#     if solucion.success:
-#         print(solucion.q)
-#         robot.plot(solucion.q)
-#         time.sleep(0.01)
-#     else:
-#         print("No se encontró solución")
+for yi, xi in zip(y,x):
+    q = IK_robot(xi, yi, z)
+    if q is not None:
+        # robot.plot(q)
+        # time.sleep(0.01)  # Esperar un poco para ver el resultado
+        q_formatted = ", ".join([f"{q_:.3f}" for q_ in q])
+        print(q_formatted)
+    else:
+        print("No se encontró una solución válida.")
+        
+
  
 
 
-# Suponiendo que ya tienes definido tu robot en 'robot'
-# Y las posiciones X, Y, Z y el ángulo Yaw deseados
-x_deseado, y_deseado, z_deseado = 8.8, 4.5, 30.7  # Ejemplo de posición deseada
-yaw_deseado = radians(90)  # Convertir a radianes si estás trabajando con grados
-pitch = 0  # Ángulo de Pitch inicial
-# Rango de Pitch a barrer
-roll_min = radians(-150)
-roll_max = radians(150)
-roll_step = radians(5)  # Definir un paso adecuado para el barrido
-
-menor_error = 2
-mejor_solucion = None
-# Lista para almacenar soluciones válidas
-soluciones_validas = []
-
-for roll in np.arange(roll_min, roll_max, roll_step):
-    T_deseada = SE3(x_deseado, y_deseado, z_deseado) * SE3.RPY([yaw_deseado, pitch, roll], order='zyx')
-    solucion = robot.ikine_LM(T_deseada, [0, 0, 0, 0], 20, 10, 0.2, True)
-    print(f"Solución: {solucion}")
-
-    # Verificar si la solución es válida y cumple con los criterios de error
-    if solucion.success and solucion.residual < menor_error:
-        mejor_solucion = solucion
-        menor_error = solucion.residual
-        if menor_error < 30e-3:
-            break
-
-# Procesar soluciones válidas
-if mejor_solucion is not None:
-    print(f"Mejor solución encontrada con error residual {menor_error}: {mejor_solucion.q}")
-    print(f"Ángulos en grados: {[degrees(angle) for angle in mejor_solucion.q]}")
-else:
-    print("No se encontró una solución válida.")

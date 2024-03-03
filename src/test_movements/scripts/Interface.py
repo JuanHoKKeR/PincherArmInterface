@@ -181,7 +181,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             
             T = self.robot.fkine(positions)
             x, y, z = T.t
-            ypr = tr2rpy(T.A, unit='deg')  # Asume que deseas los ángulos en grados. Usa 'rad' para radianes.
+            ypr = tr2rpy(T.A, unit='deg')  
             yaw, pitch, roll = ypr
             self.Directa_X.setText(f"{x:.2f}")
             self.Directa_Y.setText(f"{y:.2f}")
@@ -266,7 +266,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             x = float(self.Inverse_X.text())
             y = float(self.Inverse_Y.text())
             z = float(self.Inverse_Z.text())
-            # Definir yaw, pitch, roll aquí si son obtenidos de la interfaz de usuario
         except ValueError as e:
             self.Advertencia.setText(f"Input error: {e}")
             return
@@ -279,10 +278,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if solution.success and solution.residual < menor_error:
                     mejor_solucion = solution
                     menor_error = solution.residual
-            #T = SE3(x, y, z) * SE3.RPY([roll, pitch, yaw], order='zyx')
-            #solution = self.robot.ikine_LM(T, [0, 0, 0, 0], 70, 120,1.5, True, None, None)   # Ajusta los argumentos según necesites
-            #print(solution)
-            #if solution.success:
             solution = mejor_solucion
             print(solution)
             if solution is not None:

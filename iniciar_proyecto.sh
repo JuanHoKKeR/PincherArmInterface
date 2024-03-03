@@ -23,6 +23,11 @@ roslaunch pincher_arm_bringup arm.launch &
 roslaunch_pid=$!
 sleep 10
 
+echo "Iniciando visualización para el robot..."
+roslaunch pincher_arm_moveit_config pincher_arm_moveit.launch sim:=false &
+roslaunch_pid=$!
+sleep 10
+
 echo "Iniciando el proyecto..."
 rosrun test_movements Interface.py &
 rosrun_pid=$!
